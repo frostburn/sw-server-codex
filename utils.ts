@@ -51,19 +51,27 @@ export function acceptsGzipEncoding(acceptEncoding: string | null) {
     return false;
   }
 
-  return acceptEncoding
-    .split(',')
-    .map(value => value.trim().toLowerCase())
-    .some(value => {
-      const [encoding, ...params] = value.split(';').map(v => v.trim());
-      if (encoding !== 'gzip') {
-        return false;
-      }
-      const q = params.find(param => param.startsWith('q='));
-      if (!q) {
-        return true;
-      }
-      const qValue = Number(q.slice(2));
-      return Number.isFinite(qValue) && qValue > 0;
-    });
+  let gzipQuality: number | undefined;
+  let wildcardQuality: number | undefined;
+  for (const entry of acceptEncoding.split(',')) {
+    const [encoding, ...params] = entry
+      .trim()
+      .toLowerCase()
+      .split(';')
+      .map(v => v.trim());
+    if (encoding !== 'gzip' && encoding !== '*') {
+      continue;
+    }
+    const q = params.find(param => param.startsWith('q='));
+    const quality = q ? Number(q.slice(2)) : 1;
+    if (!Number.isFinite(quality)) {
+      continue;
+    }
+    if (encoding === 'gzip') {
+      gzipQuality = quality;
+    } else {
+      wildcardQuality = quality;
+    }
+  }
+  return (gzipQuality ?? wildcardQuality ?? 0) > 0;
 }

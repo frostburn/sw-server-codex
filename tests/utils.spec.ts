@@ -50,4 +50,17 @@ describe('Accept-Encoding parser', () => {
   it('rejects gzip with q=0', () => {
     expect(acceptsGzipEncoding('gzip;q=0')).toBe(false);
   });
+
+  it('accepts wildcard encoding', () => {
+    expect(acceptsGzipEncoding('*')).toBe(true);
+  });
+
+  it('rejects wildcard with q=0', () => {
+    expect(acceptsGzipEncoding('*;q=0')).toBe(false);
+  });
+
+  it('prefers explicit gzip quality over wildcard', () => {
+    expect(acceptsGzipEncoding('gzip;q=0, *;q=1')).toBe(false);
+    expect(acceptsGzipEncoding('gzip;q=1, *;q=0')).toBe(true);
+  });
 });
