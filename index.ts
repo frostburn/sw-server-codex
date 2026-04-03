@@ -156,14 +156,13 @@ const server = Bun.serve({
       }
       await Bun.write(envelopeFile, JSON.stringify(envelope));
 
-      const payload = validatePayload(data.payload);
-      // TODO: Generate preview image
+      validatePayload(data.payload);
       const filename = join(SCALE_PATH, id + '.json.gz');
       const file = Bun.file(filename);
       if (await file.exists()) {
         return response('Scale already exists', {status: 409});
       }
-      const buffer = Buffer.from(JSON.stringify(payload));
+      const buffer = Buffer.from(JSON.stringify(data.payload));
       await Bun.write(file, Bun.gzipSync(buffer));
 
       return response('Scale created', {status: 201});
