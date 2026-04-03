@@ -1,7 +1,7 @@
 import {stat} from 'node:fs';
 import {join, parse} from 'node:path';
 import {cleanAndValidateEnvelope, validatePayload} from './data-processing';
-import {validateId} from './utils';
+import {validateId, getNetworkUrls} from './utils';
 
 const INDEX_BODY = `
 <!DOCTYPE html>
@@ -117,6 +117,7 @@ const server = Bun.serve({
     if (path === '/') {
       const res = response(INDEX_BODY);
       res.headers.append('Content-Type', 'text/html');
+
       return res;
     }
 
@@ -228,3 +229,7 @@ const server = Bun.serve({
 });
 
 console.log(`Listening on ${server.url}`);
+
+for (const url of getNetworkUrls(process.env.BUN_PORT)) {
+  console.log(`Network: ${url}`);
+}

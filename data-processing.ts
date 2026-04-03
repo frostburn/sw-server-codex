@@ -85,14 +85,14 @@ export function cleanAndValidateEnvelope(data: any) {
     envelope.navigator = {};
     envelope.navigator.userAgent = validateString(
       data.navigator.userAgent,
-      1023
+      1023,
     );
     envelope.language = validateString(data.navigator.language);
     if (!Array.isArray(data.navigator.languages)) {
       throw new Error('Not an array');
     }
     envelope.languages = data.navigator.languages.map((l: string) =>
-      validateString(l)
+      validateString(l),
     );
   }
   if (data.userUUID) {

@@ -18,7 +18,7 @@ for (const filename of readdirSync(ENVELOPE_PATH)) {
     const oldPath = join(ENVELOPE_PATH, filename);
     const newPath = join(
       ENVELOPE_PATH,
-      filename.replaceAll('-', 'å').replaceAll('~', '_')
+      filename.replaceAll('-', 'å').replaceAll('~', '_'),
     );
     renameSync(oldPath, newPath);
     console.log('Renamed', oldPath, 'to', newPath);
