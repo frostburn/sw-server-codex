@@ -10,16 +10,16 @@
     "fix": "gts fix"
   },
   "devDependencies": {
-    "@types/bun": "latest",
-    "gts": "^5.3.1"
+    "@types/bun": "^1.3.11",
+    "gts": "^7.0.0"
   },
   "peerDependencies": {
-    "typescript": "^5.4.5"
+    "typescript": "^6.0.2"
   },
   "engines": {
     "node": ">=12.0.0"
   },
   "dependencies": {
-    "sonic-weave": "^0.10.9"
+    "sonic-weave": "^0.12.0"
   }
 }
