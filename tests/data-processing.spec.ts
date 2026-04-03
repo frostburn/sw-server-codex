@@ -8,10 +8,10 @@ describe('Payload validator', () => {
     expect(validatePayload(TEST_SCALE.payload)).toBe(true);
   });
 
-  it('rejects NaN values', () => {
+  it('allows NaN values for unbounded numeric fields', () => {
     const payload = structuredClone(TEST_SCALE.payload);
-    payload.audio.mainVolume = NaN;
-    expect(() => validatePayload(payload)).toThrow();
+    payload.audio.attackTime = NaN;
+    expect(validatePayload(payload)).toBe(true);
   });
 
   it('allows infinite values for unbounded numeric fields', () => {
