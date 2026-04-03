@@ -23,6 +23,24 @@ describe('Payload validator', () => {
 
 describe('Envelope validator', () => {
   it('cleans and validates the test envelope', () => {
-    expect(() => cleanAndValidateEnvelope(TEST_SCALE.envelope)).not.toThrow();
+    const envelope = cleanAndValidateEnvelope(TEST_SCALE.envelope);
+    expect(envelope.navigator).toBeUndefined();
+  });
+
+  it('nests navigator language fields under navigator', () => {
+    const envelope = cleanAndValidateEnvelope({
+      ...TEST_SCALE.envelope,
+      navigator: {
+        userAgent: 'test-agent',
+        language: 'en-US',
+        languages: ['en-US', 'en'],
+      },
+    });
+    expect(envelope.navigator.language).toBe(
+      'en-US',
+    );
+    expect(envelope.navigator.languages).toEqual(['en-US', 'en']);
+    expect(envelope.language).toBeUndefined();
+    expect(envelope.languages).toBeUndefined();
   });
 });

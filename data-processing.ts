@@ -152,11 +152,11 @@ export function cleanAndValidateEnvelope(data: any) {
       data.navigator.userAgent,
       1023,
     );
-    envelope.language = validateString(data.navigator.language);
+    envelope.navigator.language = validateString(data.navigator.language);
     if (!Array.isArray(data.navigator.languages)) {
       throw new Error('Not an array');
     }
-    envelope.languages = data.navigator.languages.map((l: string) =>
+    envelope.navigator.languages = data.navigator.languages.map((l: string) =>
       validateString(l),
     );
   }
