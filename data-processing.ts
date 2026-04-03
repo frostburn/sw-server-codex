@@ -3,6 +3,14 @@ import {version} from './package.json';
 
 const serverSonicWeaveVersion = evaluateExpression('VERSION', false) as string;
 
+/**
+ * Validates an input as a string and enforces a maximum length.
+ *
+ * @param str - Value to validate.
+ * @param maxLength - Maximum allowed length in characters.
+ * @returns The same string when validation succeeds.
+ * @throws {Error} If the value is not a string or exceeds `maxLength`.
+ */
 function validateString(str: string, maxLength = 255) {
   if (typeof str !== 'string') {
     throw new Error('Not a string');
@@ -13,6 +21,13 @@ function validateString(str: string, maxLength = 255) {
   return str;
 }
 
+/**
+ * Validates an input as a number.
+ *
+ * @param n - Value to validate.
+ * @returns The same number when validation succeeds.
+ * @throws {Error} If the value is not a number.
+ */
 function validateNumber(n: number) {
   if (typeof n !== 'number') {
     throw new Error('Not a number (or even NaN)');
@@ -20,6 +35,13 @@ function validateNumber(n: number) {
   return n;
 }
 
+/**
+ * Validates an incoming scale payload before it is persisted.
+ *
+ * @param data - Parsed request payload object.
+ * @returns The original payload object when validation succeeds.
+ * @throws {Error} If any required field is missing or malformed.
+ */
 export function validatePayload(data: any) {
   // == Scale ==
   const scaleStore = data.scale;
@@ -72,6 +94,13 @@ export function validatePayload(data: any) {
   return data;
 }
 
+/**
+ * Sanitizes and validates client envelope metadata.
+ *
+ * @param data - Raw envelope metadata supplied by the client.
+ * @returns A server-augmented envelope object ready for storage.
+ * @throws {Error} If envelope fields fail validation.
+ */
 export function cleanAndValidateEnvelope(data: any) {
   const envelope: any = {
     serverVersion: version,
