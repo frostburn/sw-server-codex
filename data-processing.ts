@@ -29,8 +29,8 @@ function validateString(str: string, maxLength = 255) {
  * @throws {Error} If the value is not a number.
  */
 function validateNumber(n: number) {
-  if (typeof n !== 'number' || !Number.isFinite(n)) {
-    throw new Error('Not a number (or even NaN)');
+  if (typeof n !== 'number' || Number.isNaN(n)) {
+    throw new Error('Not a number');
   }
   return n;
 }

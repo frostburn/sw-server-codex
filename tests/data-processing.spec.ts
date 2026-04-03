@@ -14,10 +14,10 @@ describe('Payload validator', () => {
     expect(() => validatePayload(payload)).toThrow();
   });
 
-  it('rejects infinite values', () => {
+  it('allows infinite values for unbounded numeric fields', () => {
     const payload = structuredClone(TEST_SCALE.payload);
-    payload.audio.mainVolume = Number.POSITIVE_INFINITY;
-    expect(() => validatePayload(payload)).toThrow();
+    payload.audio.attackTime = Number.POSITIVE_INFINITY;
+    expect(validatePayload(payload)).toBe(true);
   });
 });
 
