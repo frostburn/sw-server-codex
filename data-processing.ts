@@ -36,10 +36,24 @@ function validateNumber(n: number) {
 }
 
 /**
+ * Validates an input as a boolean.
+ *
+ * @param b - Value to validate.
+ * @returns The same boolean when validation succeeds.
+ * @throws {Error} If the value is not a boolean.
+ */
+function validateBoolean(b: boolean) {
+  if (typeof b !== 'boolean') {
+    throw new Error('Not a boolean');
+  }
+  return b;
+}
+
+/**
  * Validates an incoming scale payload before it is persisted.
  *
  * @param data - Parsed request payload object.
- * @returns The original payload object when validation succeeds.
+ * @returns `true` when validation succeeds.
  * @throws {Error} If any required field is missing or malformed.
  */
 export function validatePayload(data: any) {
@@ -67,7 +81,21 @@ export function validatePayload(data: any) {
   validateString(scaleStore.error);
   validateString(scaleStore.warning);
   validateString(scaleStore.keyboardMode);
-  // TODO: Rest
+  validateString(scaleStore.autoColors);
+  validateString(scaleStore.pianoMode);
+  validateString(scaleStore.accidentalColor);
+  validateString(scaleStore.lowAccidentalColor);
+  validateString(scaleStore.middleAccidentalColor);
+  validateString(scaleStore.highAccidentalColor);
+  validateNumber(scaleStore.userBaseFrequency);
+  validateBoolean(scaleStore.autoFrequency);
+  validateNumber(scaleStore.isomorphicVertical);
+  validateNumber(scaleStore.isomorphicHorizontal);
+  validateNumber(scaleStore.equaveShift);
+  validateNumber(scaleStore.degreeShift);
+  if (scaleStore.latticeIntervals !== null) {
+    Interval.reviver('latticeIntervals', scaleStore.latticeIntervals);
+  }
 
   // == Audio ==
   const audio = data.audio;
@@ -90,8 +118,16 @@ export function validatePayload(data: any) {
   }
   validateString(audio.waveform);
   validateString(audio.aperiodicWaveform);
-  // TODO: Rest
-  return data;
+  validateString(audio.synthType);
+  validateNumber(audio.attackTime);
+  validateNumber(audio.decayTime);
+  validateNumber(audio.releaseTime);
+  validateNumber(audio.stackSize);
+  validateNumber(audio.spread);
+  validateNumber(audio.audioDelay);
+  validateNumber(audio.pingPongDelayTime);
+  validateNumber(audio.pingPongSeparation);
+  return true;
 }
 
 /**

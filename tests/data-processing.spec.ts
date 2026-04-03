@@ -5,9 +5,7 @@ import TEST_SCALE from './test-scale.json';
 
 describe('Payload validator', () => {
   it('validates the test scale', () => {
-    const data = validatePayload(TEST_SCALE.payload);
-    // TODO: Return boolean instead.
-    expect(data).toBe(TEST_SCALE.payload);
+    expect(validatePayload(TEST_SCALE.payload)).toBe(true);
   });
 });
 
