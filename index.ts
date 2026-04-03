@@ -137,14 +137,24 @@ const server = Bun.serve({
       }
       await checkStatistics();
       statistics['scale POST']++;
-      const data = await req.json();
+      let data: any;
+      try {
+        data = await req.json();
+      } catch {
+        return response('Bad JSON payload', {status: 400});
+      }
       if (!validateId(data.id)) {
         return response('Bad identifier', {status: 400});
       }
       // Convert dashes to something more bash friendly.
       const id = (data.id as string).replaceAll('-', 'å');
-      validatePayload(data.payload);
-      const envelope = cleanAndValidateEnvelope(data.envelope);
+      let envelope: any;
+      try {
+        validatePayload(data.payload);
+        envelope = cleanAndValidateEnvelope(data.envelope);
+      } catch {
+        return response('Bad scale payload', {status: 400});
+      }
       envelope.requestIP = requestIP;
       envelope.xRealIP = xRealIP;
       envelope.xForwardedFor = xForwardedFor;
