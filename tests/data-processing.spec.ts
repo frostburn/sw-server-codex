@@ -2,10 +2,12 @@ import {expect, it, describe} from 'bun:test';
 import {cleanAndValidateEnvelope, validatePayload} from '../data-processing';
 
 import TEST_SCALE from './test-scale.json';
+import TEST_SCALE_HARMONICS from './test-scale-harmonics.json';
 
 describe('Payload validator', () => {
-  it('validates the test scale', () => {
+  it('validates the test scales', () => {
     expect(validatePayload(TEST_SCALE.payload)).toBe(true);
+    expect(validatePayload(TEST_SCALE_HARMONICS.payload)).toBe(true);
   });
 
   it('allows NaN values for unbounded numeric fields', () => {
@@ -36,9 +38,7 @@ describe('Envelope validator', () => {
         languages: ['en-US', 'en'],
       },
     });
-    expect(envelope.navigator.language).toBe(
-      'en-US',
-    );
+    expect(envelope.navigator.language).toBe('en-US');
     expect(envelope.navigator.languages).toEqual(['en-US', 'en']);
     expect(envelope.language).toBeUndefined();
     expect(envelope.languages).toBeUndefined();

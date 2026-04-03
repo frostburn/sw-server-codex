@@ -150,10 +150,9 @@ const server = Bun.serve({
       const id = (data.id as string).replaceAll('-', 'å');
       let envelope: any;
       try {
-        validatePayload(data.payload);
         envelope = cleanAndValidateEnvelope(data.envelope);
       } catch {
-        return response('Bad scale payload', {status: 400});
+        return response('Bad scale envelope', {status: 400});
       }
       envelope.requestIP = requestIP;
       envelope.xRealIP = xRealIP;
@@ -165,6 +164,15 @@ const server = Bun.serve({
       if (await envelopeFile.exists()) {
         return response('Scale already exists', {status: 409});
       }
+      // Write envelope before scale payload. Dangling envelopes indicate problems to debug.
+      await Bun.write(envelopeFile, JSON.stringify(envelope));
+
+      try {
+        validatePayload(data.payload);
+      } catch {
+        return response('Bad scale payload', {status: 400});
+      }
+
       const filename = join(SCALE_PATH, id + '.json.gz');
       const file = Bun.file(filename);
       if (await file.exists()) {
@@ -173,7 +181,6 @@ const server = Bun.serve({
 
       const buffer = Buffer.from(JSON.stringify(data.payload));
       await Bun.write(file, Bun.gzipSync(buffer));
-      await Bun.write(envelopeFile, JSON.stringify(envelope));
 
       return response('Scale created', {status: 201});
     }
