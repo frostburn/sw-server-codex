@@ -1,7 +1,7 @@
 import {stat} from 'node:fs';
 import {join, parse} from 'node:path';
 import {cleanAndValidateEnvelope, validatePayload} from './data-processing';
-import {validateId, getNetworkUrls} from './utils';
+import {validateId, getNetworkUrls, acceptsGzipEncoding} from './utils';
 
 const INDEX_BODY = `
 <!DOCTYPE html>
@@ -143,6 +143,7 @@ const server = Bun.serve({
       }
       // Convert dashes to something more bash friendly.
       const id = (data.id as string).replaceAll('-', 'å');
+      validatePayload(data.payload);
       const envelope = cleanAndValidateEnvelope(data.envelope);
       envelope.requestIP = requestIP;
       envelope.xRealIP = xRealIP;
@@ -154,16 +155,15 @@ const server = Bun.serve({
       if (await envelopeFile.exists()) {
         return response('Scale already exists', {status: 409});
       }
-      await Bun.write(envelopeFile, JSON.stringify(envelope));
-
-      validatePayload(data.payload);
       const filename = join(SCALE_PATH, id + '.json.gz');
       const file = Bun.file(filename);
       if (await file.exists()) {
         return response('Scale already exists', {status: 409});
       }
+
       const buffer = Buffer.from(JSON.stringify(data.payload));
       await Bun.write(file, Bun.gzipSync(buffer));
+      await Bun.write(envelopeFile, JSON.stringify(envelope));
 
       return response('Scale created', {status: 201});
     }
@@ -192,11 +192,9 @@ const server = Bun.serve({
       const count = statistics['scale GET by id'][id] ?? 0;
       statistics['scale GET by id'][id] = count + 1;
 
-      const accept = req.headers.get('Accept-Encoding');
       if (
         url.searchParams.get('gzip') === '0' ||
-        !accept ||
-        !accept.split(',').includes('gzip')
+        !acceptsGzipEncoding(req.headers.get('Accept-Encoding'))
       ) {
         const buffer = await file.arrayBuffer();
         return response(Bun.gunzipSync(buffer));
